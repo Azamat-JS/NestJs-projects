@@ -13,7 +13,7 @@ export class AppService {
     getAllData(){
         return this.items
     }
-    getData(){
+    addData(){
         return 'olim'
     }
 }
