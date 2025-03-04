@@ -13,8 +13,8 @@ export class TasksController {
    }
 
    @Get(":id")
-    async getOneTask(@Param("id") id:string):Promise<Task>{
-        return this.getOneTask(id)
+    async findOneTask(@Param("id") id:string):Promise<Task>{
+        return this.taskService.findOneTask(id)
     }
 
     @Post()
@@ -23,7 +23,7 @@ export class TasksController {
     }
 
     @Put(":id")
-    async updateTask(@Param("id") id:string, @Body() task: Task):Promise<Task | string>{
+    async updateTask(@Param("id") id:string, @Body() task: Task):Promise<Task>{
         return this.taskService.updateTask(id, task)
     }
 
