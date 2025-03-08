@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JwtGuard = void 0;
+exports.AdminGuard = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
-let JwtGuard = class JwtGuard {
+let AdminGuard = class AdminGuard {
     jwtService;
     constructor(jwtService) {
         this.jwtService = jwtService;
@@ -20,28 +20,29 @@ let JwtGuard = class JwtGuard {
     async canActivate(context) {
         const request = context.switchToHttp().getRequest();
         const authHeader = request.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            throw new common_1.UnauthorizedException();
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new common_1.UnauthorizedException('Missing or invalid token');
         }
-        const accessToken = authHeader.split(" ")[1];
+        const adminToken = authHeader.split(' ')[1];
         try {
-            const payload = await this.jwtService.verifyAsync(accessToken, {
-                secret: process.env.JWT_SECRET,
-            });
+            const payload = await this.jwtService.verifyAsync(adminToken, { secret: process.env.JWT_SECRET });
+            if (payload.role !== 'admin') {
+                throw new common_1.ForbiddenException('You are not admin');
+            }
             request['user'] = payload;
             return true;
         }
-        catch (err) {
-            if (err instanceof common_1.HttpException)
-                throw err;
-            console.error(err);
+        catch (error) {
+            if (error instanceof common_1.HttpException)
+                throw error;
+            console.error(error);
             throw new common_1.UnauthorizedException();
         }
     }
 };
-exports.JwtGuard = JwtGuard;
-exports.JwtGuard = JwtGuard = __decorate([
+exports.AdminGuard = AdminGuard;
+exports.AdminGuard = AdminGuard = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [jwt_1.JwtService])
-], JwtGuard);
-//# sourceMappingURL=jwtAuth.guard.js.map
+], AdminGuard);
+//# sourceMappingURL=admin.guard.js.map
