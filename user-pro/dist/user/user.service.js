@@ -17,29 +17,66 @@ const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const user_model_1 = require("./user.model");
 const bcrypt = require("bcryptjs");
+const jwt_1 = require("@nestjs/jwt");
 let UserService = class UserService {
     userModel;
-    constructor(userModel) {
+    jwtService;
+    constructor(userModel, jwtService) {
         this.userModel = userModel;
+        this.jwtService = jwtService;
     }
     async register(createUserDto) {
         try {
             const { username, email, password, role } = createUserDto;
             const checkUser = await this.userModel.findOne({ where: { username } });
             if (checkUser) {
-                throw new common_1.BadRequestException('Username already exists');
+                throw new common_1.BadRequestException("Username already exists");
             }
             const salt = await bcrypt.genSaltSync(10);
             const hash = await bcrypt.hashSync(password, salt);
-            const newUser = await this.userModel.create({ username, email, password: hash, role });
-            return { message: 'User registered successfully', data: newUser };
+            const newUser = await this.userModel.create({
+                username,
+                email,
+                password: hash,
+                role,
+            });
+            return { message: "User registered successfully", data: newUser };
         }
         catch (error) {
             if (error instanceof common_1.HttpException) {
                 throw error;
             }
             console.error(error);
-            throw new common_1.InternalServerErrorException('Something went wrong');
+            throw new common_1.InternalServerErrorException("Something went wrong");
+        }
+    }
+    async login(loginDto) {
+        try {
+            const { email, password } = loginDto;
+            const checkEmail = await this.userModel.findOne({ where: { email } });
+            if (!checkEmail) {
+                throw new common_1.UnauthorizedException("Unauthorized Error, please sign up");
+            }
+            const isPasswordMatch = await bcrypt.compare(password, checkEmail.dataValues.password);
+            if (!isPasswordMatch) {
+                throw new common_1.BadRequestException("Invalid credentials");
+            }
+            const payload = {
+                id: checkEmail.dataValues.id,
+                email: checkEmail.dataValues.email,
+                role: checkEmail.dataValues.role,
+            };
+            const accessToken = await this.jwtService.signAsync(payload, { secret: process.env.JWT_SECRET,
+                expiresIn: '1d'
+            });
+            return { message: "Login successful", token: accessToken };
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            console.error(error);
+            throw new common_1.InternalServerErrorException("Something went wrong");
         }
     }
     async findAll() {
@@ -49,29 +86,29 @@ let UserService = class UserService {
     async findOne(id) {
         const user = await this.userModel.findOne({ where: { id } });
         if (!user)
-            throw new common_1.NotFoundException('User not found');
-        return { message: 'User found', data: user };
+            throw new common_1.NotFoundException("User not found");
+        return { message: "User found", data: user };
     }
     async update(id, updateUserDto) {
         const user = await this.userModel.findOne({ where: { id } });
         if (!user)
-            throw new common_1.NotFoundException('User not found');
+            throw new common_1.NotFoundException("User not found");
         await user.update({ ...updateUserDto });
         await user.reload();
-        return { message: 'User updated successfully', data: user };
+        return { message: "User updated successfully", data: user };
     }
     async remove(id) {
         const user = await this.userModel.findOne({ where: { id } });
         if (!user)
-            throw new common_1.NotFoundException('User not found');
+            throw new common_1.NotFoundException("User not found");
         await this.userModel.destroy({ where: { id } });
-        return 'User deleted successfully';
+        return "User deleted successfully";
     }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(user_model_1.User)),
-    __metadata("design:paramtypes", [Object])
+    __metadata("design:paramtypes", [Object, jwt_1.JwtService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

@@ -12,15 +12,22 @@ const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
 const sequelize_1 = require("@nestjs/sequelize");
 const user_model_1 = require("./user.model");
+const jwt_1 = require("@nestjs/jwt");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
-        imports: [sequelize_1.SequelizeModule.forFeature([user_model_1.User])],
+        imports: [sequelize_1.SequelizeModule.forFeature([user_model_1.User]),
+            jwt_1.JwtModule.register({
+                global: true,
+                secret: process.env.JWT_SECRET,
+                signOptions: { expiresIn: process.env.JWT_TIME }
+            })
+        ],
         controllers: [user_controller_1.UserController],
         providers: [user_service_1.UserService],
-        exports: []
+        exports: [user_service_1.UserService]
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

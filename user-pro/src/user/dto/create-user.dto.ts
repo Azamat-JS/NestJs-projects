@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsNotEmpty } from "class-validator";
+import { IsString, IsEmail, IsNotEmpty, IsEnum } from "class-validator";
 
 export class CreateUserDto {
   @IsString()
@@ -13,5 +13,6 @@ export class CreateUserDto {
   password: string;
 
   @IsString()
-  role:string
+  @IsEnum(['admin', 'user'], {message: 'Role must be either admin or user'})
+  role:string;
 }

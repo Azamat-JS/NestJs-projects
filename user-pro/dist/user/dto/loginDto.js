@@ -9,39 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserDto = void 0;
-const mapped_types_1 = require("@nestjs/mapped-types");
-const create_user_dto_1 = require("./create-user.dto");
+exports.LoginDto = void 0;
 const class_validator_1 = require("class-validator");
-var UserRole;
-(function (UserRole) {
-    UserRole["ADMIN"] = "admin";
-    UserRole["USER"] = "user";
-})(UserRole || (UserRole = {}));
-class UpdateUserDto extends (0, mapped_types_1.PartialType)(create_user_dto_1.CreateUserDto) {
-    username;
+class LoginDto {
     email;
     password;
-    role;
 }
-exports.UpdateUserDto = UpdateUserDto;
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "username", void 0);
+exports.LoginDto = LoginDto;
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'Email cannot be empty' }),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], UpdateUserDto.prototype, "email", void 0);
+], LoginDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'Password field must not be empty' }),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateUserDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsEnum)(UserRole, { message: 'Role must be either admin or user' }),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "role", void 0);
-//# sourceMappingURL=update-user.dto.js.map
+], LoginDto.prototype, "password", void 0);
+//# sourceMappingURL=loginDto.js.map

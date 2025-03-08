@@ -17,13 +17,17 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
+const loginDto_1 = require("./dto/loginDto");
 let UserController = class UserController {
     userService;
     constructor(userService) {
         this.userService = userService;
     }
-    create(createUserDto) {
+    register(createUserDto) {
         return this.userService.register(createUserDto);
+    }
+    login(loginDto) {
+        return this.userService.login(loginDto);
     }
     findAll() {
         return this.userService.findAll();
@@ -40,12 +44,19 @@ let UserController = class UserController {
 };
 exports.UserController = UserController;
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", void 0)
-], UserController.prototype, "create", null);
+], UserController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [loginDto_1.LoginDto]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "login", null);
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),

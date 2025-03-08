@@ -1,12 +1,17 @@
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginDto } from './dto/loginDto';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
-    create(createUserDto: CreateUserDto): Promise<{
+    register(createUserDto: CreateUserDto): Promise<{
         message: string;
         data: Partial<import("./user.model").User>;
+    }>;
+    login(loginDto: LoginDto): Promise<{
+        message: string;
+        token: string;
     }>;
     findAll(): Promise<import("./user.model").User[]>;
     findOne(id: string): Promise<{
