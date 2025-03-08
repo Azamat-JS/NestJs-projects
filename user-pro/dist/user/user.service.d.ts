@@ -6,16 +6,16 @@ export declare class UserService {
     constructor(userModel: typeof User);
     register(createUserDto: CreateUserDto): Promise<{
         message: string;
-        data: User;
+        data: Partial<User>;
     }>;
     findAll(): Promise<User[]>;
-    findOne(id: number): Promise<{
+    findOne(id: string): Promise<{
         message: string;
         data: User;
     }>;
-    update(id: number, updateUserDto: UpdateUserDto): Promise<{
+    update(id: string, updateUserDto: UpdateUserDto): Promise<{
         message: string;
         data: User;
     }>;
-    remove(id: number): Promise<string>;
+    remove(id: string): Promise<string>;
 }

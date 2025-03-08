@@ -16,32 +16,44 @@ exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const user_model_1 = require("./user.model");
+const bcrypt = require("bcryptjs");
 let UserService = class UserService {
     userModel;
     constructor(userModel) {
         this.userModel = userModel;
     }
     async register(createUserDto) {
-        const { username, email, password, role } = createUserDto;
-        const checkUser = await this.userModel.findOne({ where: { username } });
-        if (checkUser) {
-            throw new common_1.BadRequestException('Username already exists');
+        try {
+            const { username, email, password, role } = createUserDto;
+            const checkUser = await this.userModel.findOne({ where: { username } });
+            if (checkUser) {
+                throw new common_1.BadRequestException('Username already exists');
+            }
+            const salt = await bcrypt.genSaltSync(10);
+            const hash = await bcrypt.hashSync(password, salt);
+            const newUser = await this.userModel.create({ username, email, password: hash, role });
+            return { message: 'User registered successfully', data: newUser };
         }
-        const newUser = await this.userModel.create({ username, email, password, role });
-        return { message: 'User registered successfully', data: newUser };
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            console.error(error);
+            throw new common_1.InternalServerErrorException('Something went wrong');
+        }
     }
     async findAll() {
         const users = await this.userModel.findAll();
         return users;
     }
     async findOne(id) {
-        const user = await this.userModel.findByPk(id);
+        const user = await this.userModel.findOne({ where: { id } });
         if (!user)
             throw new common_1.NotFoundException('User not found');
         return { message: 'User found', data: user };
     }
     async update(id, updateUserDto) {
-        const user = await this.userModel.findByPk(id);
+        const user = await this.userModel.findOne({ where: { id } });
         if (!user)
             throw new common_1.NotFoundException('User not found');
         await user.update({ ...updateUserDto });
@@ -49,10 +61,10 @@ let UserService = class UserService {
         return { message: 'User updated successfully', data: user };
     }
     async remove(id) {
-        const user = await this.userModel.findByPk(id);
+        const user = await this.userModel.findOne({ where: { id } });
         if (!user)
             throw new common_1.NotFoundException('User not found');
-        this.userModel.destroy({ where: { id } });
+        await this.userModel.destroy({ where: { id } });
         return 'User deleted successfully';
     }
 };

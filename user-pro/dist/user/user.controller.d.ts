@@ -6,7 +6,7 @@ export declare class UserController {
     constructor(userService: UserService);
     create(createUserDto: CreateUserDto): Promise<{
         message: string;
-        data: import("./user.model").User;
+        data: Partial<import("./user.model").User>;
     }>;
     findAll(): Promise<import("./user.model").User[]>;
     findOne(id: string): Promise<{

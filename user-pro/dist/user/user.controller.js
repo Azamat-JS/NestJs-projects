@@ -29,13 +29,13 @@ let UserController = class UserController {
         return this.userService.findAll();
     }
     findOne(id) {
-        return this.userService.findOne(+id);
+        return this.userService.findOne(id);
     }
     update(id, updateUserDto) {
-        return this.userService.update(+id, updateUserDto);
+        return this.userService.update(id, updateUserDto);
     }
     remove(id) {
-        return this.userService.remove(+id);
+        return this.userService.remove(id);
     }
 };
 exports.UserController = UserController;
@@ -75,7 +75,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "remove", null);
 exports.UserController = UserController = __decorate([
-    (0, common_1.Controller)('user'),
+    (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
 //# sourceMappingURL=user.controller.js.map
