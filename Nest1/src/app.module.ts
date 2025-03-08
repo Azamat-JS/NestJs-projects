@@ -4,6 +4,7 @@ import { AppService } from "./app.service";
 import {ConfigModule} from '@nestjs/config'
 import { TasksModule } from './tasks/tasks.module';
 import { MongooseModule } from "@nestjs/mongoose";
+import { ServiceRegistryModule } from './service-registry/service-registry.module';
 
 
 
@@ -11,7 +12,8 @@ import { MongooseModule } from "@nestjs/mongoose";
     imports: [
         ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
         MongooseModule.forRoot(process.env.MONGO_URI!),
-        TasksModule
+        TasksModule,
+        ServiceRegistryModule
     ],
     controllers: [AppController],
     providers: [AppService],
